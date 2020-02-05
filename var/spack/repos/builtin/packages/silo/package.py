@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -32,11 +13,11 @@ class Silo(AutotoolsPackage):
     homepage = "http://wci.llnl.gov/simulation/computer-codes/silo"
     url      = "https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2.tar.gz"
 
-    version('4.10.2', '9ceac777a2f2469ac8cef40f4fab49c8', preferred=True)
-    version('4.10.2-bsd', '60fef9ce373daf1e9cc8320cfa509bc5',
+    version('4.10.2', sha256='3af87e5f0608a69849c00eb7c73b11f8422fa36903dd14610584506e7f68e638', preferred=True)
+    version('4.10.2-bsd', sha256='4b901dfc1eb4656e83419a6fde15a2f6c6a31df84edfad7f1dc296e01b20140e',
             url="https://wci.llnl.gov/content/assets/docs/simulation/computer-codes/silo/silo-4.10.2/silo-4.10.2-bsd.tar.gz")
-    version('4.9', 'a83eda4f06761a86726e918fc55e782a')
-    version('4.8', 'b1cbc0e7ec435eb656dc4b53a23663c9')
+    version('4.9', sha256='90f3d069963d859c142809cfcb034bc83eb951f61ac02ccb967fc8e8d0409854')
+    version('4.8', sha256='c430c1d33fcb9bc136a99ad473d535d6763bd1357b704a915ba7b1081d58fb21')
 
     variant('fortran', default=True, description='Enable Fortran support')
     variant('shared', default=True, description='Build shared libraries')

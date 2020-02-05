@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -34,15 +15,20 @@ class Cctools(AutotoolsPackage):
     homepage = "https://github.com/cooperative-computing-lab/cctools"
     url      = "https://github.com/cooperative-computing-lab/cctools/archive/release/6.1.1.tar.gz"
 
-    version('6.1.1', '9b43cdb3aceebddc1608c77184590619')
+    version('7.0.18', sha256='5b6f3c87ae68dd247534a5c073eb68cb1a60176a7f04d82699fbc05e649a91c2')
+    version('6.1.1', sha256='97f073350c970d6157f80891b3bf6d4f3eedb5f031fea386dc33e22f22b8af9d')
 
     depends_on('openssl')
     depends_on('perl+shared', type=('build', 'run'))
-    depends_on('python@:3', type=('build', 'run'))
+    depends_on('python@:2.9', when='@6.1.1', type=('build', 'run'))
+    depends_on('python', type=('build', 'run'))
     depends_on('readline')
     depends_on('swig')
     # depends_on('xrootd')
     depends_on('zlib')
+    patch('arm.patch', when='target=aarch64:')
+    patch('cctools_7.0.18.python.patch', when='@7.0.18')
+    patch('cctools_6.1.1.python.patch', when='@6.1.1')
 
     # Generally SYS_foo is defined to __NR_foo (sys/syscall.h) which
     # is then defined to a syscall number (asm/unistd_64.h).  Certain
@@ -58,10 +44,21 @@ class Cctools(AutotoolsPackage):
 
     def configure_args(self):
         args = []
+        # For python
+        if self.spec.satisfies('^python@3:'):
+            args.append('--with-python-path=no')
+            args.append(
+                '--with-python3-path={0}'.format(self.spec['python'].prefix)
+            )
+        else:
+            args.append('--with-python3-path=no')
+            args.append(
+                '--with-python-path={0}'.format(self.spec['python'].prefix)
+            )
         # disable these bits
-        for p in ['mysql', 'python3', 'xrootd']:
+        for p in ['mysql', 'xrootd']:
             args.append('--with-{0}-path=no'.format(p))
         # point these bits at the Spack installations
-        for p in ['openssl', 'perl', 'python', 'readline', 'swig', 'zlib']:
+        for p in ['openssl', 'perl', 'readline', 'swig', 'zlib']:
             args.append('--with-{0}-path={1}'.format(p, self.spec[p].prefix))
         return args

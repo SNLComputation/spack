@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -32,11 +13,11 @@ class PyCsvkit(PythonPackage):
     homepage = 'http://csvkit.rtfd.org/'
     url      = "https://pypi.io/packages/source/c/csvkit/csvkit-0.9.1.tar.gz"
 
-    version('0.9.1', '48d78920019d18846933ee969502fff6')
+    version('0.9.1', sha256='92f8b8647becb5cb1dccb3af92a13a4e85702d42ba465ce8447881fb38c9f93a')
 
     depends_on('py-setuptools', type='build')
-    depends_on('py-dateutil@2.2', type=('build', 'run'), when='@0.9.1')
-    depends_on('py-dateutil', type=('build', 'run'), when='@0.9.2:')
+    depends_on('py-python-dateutil@2.2', type=('build', 'run'), when='@0.9.1')
+    depends_on('py-python-dateutil', type=('build', 'run'), when='@0.9.2:')
     depends_on('py-dbf@0.94.003', type=('build', 'run'))
     depends_on('py-xlrd', type=('build', 'run'))
     depends_on('py-sqlalchemy', type=('build', 'run'))

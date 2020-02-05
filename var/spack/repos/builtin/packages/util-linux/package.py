@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -33,21 +14,24 @@ class UtilLinux(AutotoolsPackage):
     list_url = "https://www.kernel.org/pub/linux/utils/util-linux"
     list_depth = 1
 
-    version('2.29.2', '24e0c67aac6f5c2535208866a42aeea2')
-    version('2.29.1', 'c7d5c111ef6bc5df65659e0b523ac9d9')
-    version('2.25',   'f6d7fc6952ec69c4dc62c8d7c59c1d57')
+    version('2.29.2', sha256='29ccdf91d2c3245dc705f0ad3bf729ac41d8adcdbeff914e797c552ecb04a4c7')
+    version('2.29.1', sha256='a6a7adba65a368e6dad9582d9fbedee43126d990df51266eaee089a73c893653')
+    version('2.25',   sha256='7e43273a9e2ab99b5a54ac914fddf5d08ba7ab9b114c550e9f03474672bd23a1')
 
     depends_on('python@2.7:')
+    depends_on('pkgconfig')
+
+    # Make it possible to disable util-linux's libuuid so that you may
+    # reliably depend_on(`libuuid`).
+    variant('libuuid', default=True, description='Build libuuid')
 
     def url_for_version(self, version):
         url = "https://www.kernel.org/pub/linux/utils/util-linux/v{0}/util-linux-{1}.tar.gz"
         return url.format(version.up_to(2), version)
 
     def configure_args(self):
-        spec = self.spec
-
-        return [
-            'PKG_CONFIG_PATH={0}'.format(
-                join_path(spec['python'].prefix.lib, 'pkgconfig')),
+        config_args = [
             '--disable-use-tty-group',
         ]
+        config_args.extend(self.enable_or_disable('libuuid'))
+        return config_args

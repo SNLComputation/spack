@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 import glob
 import os
@@ -38,13 +19,17 @@ class Ncl(Package):
 
     url = "https://github.com/NCAR/ncl/archive/6.4.0.tar.gz"
 
-    version('6.4.0', 'd891452cda7bb25afad9b6c876c73986')
+    version('6.6.2', sha256='cad4ee47fbb744269146e64298f9efa206bc03e7b86671e9729d8986bb4bc30e')
+    version('6.5.0', sha256='133446f3302eddf237db56bf349e1ebf228240a7320699acc339a3d7ee414591')
+    version('6.4.0', sha256='0962ae1a1d716b182b3b27069b4afe66bf436c64c312ddfcf5f34d4ec60153c8')
 
-    patch('spack_ncl.patch', when="@6.4.0")
-    # Make ncl compile with hdf5 1.10
+    patch('spack_ncl.patch')
+    # Make ncl compile with hdf5 1.10 (upstream as of 6.5.0)
     patch('hdf5.patch', when="@6.4.0")
-    # ymake-filter's buffer may overflow
+    # ymake-filter's buffer may overflow (upstream as of 6.5.0)
     patch('ymake-filter.patch', when="@6.4.0")
+    # ymake additional local library and includes will be filtered improperly
+    patch('ymake.patch', when="@6.4.0:")
 
     # This installation script is implemented according to this manual:
     # http://www.ncl.ucar.edu/Download/build_from_src.shtml
@@ -57,8 +42,8 @@ class Ncl(Package):
 
     # Non-optional dependencies according to the manual:
     depends_on('jpeg')
-    depends_on('netcdf')
-    depends_on('cairo+X')
+    depends_on('netcdf-c')
+    depends_on('cairo+X+pdf')
 
     # Extra dependencies that may be missing from build system:
     depends_on('bison', type='build')
@@ -76,8 +61,11 @@ class Ncl(Package):
     depends_on('libx11')
     depends_on('libxaw')
     depends_on('libxmu')
+    depends_on('pixman')
+    depends_on('bzip2')
+    depends_on('freetype')
 
-    # In Spack, we do not have an option to compile netcdf without netcdf-4
+    # In Spack, we do not have an option to compile netcdf-c without netcdf-4
     # support, so we will tell the ncl configuration script that we want
     # support for netcdf-4, but the script assumes that hdf5 is compiled with
     # szip support. We introduce this restriction with the following dependency
@@ -88,20 +76,20 @@ class Ncl(Package):
     # ESMF is only required at runtime (for ESMF_regridding.ncl)
     depends_on('esmf', type='run')
 
-    # In Spack, we also do not have an option to compile netcdf without DAP
+    # In Spack, we also do not have an option to compile netcdf-c without DAP
     # support, so we will tell the ncl configuration script that we have it.
 
     # Some of the optional dependencies according to the manual:
     depends_on('hdf', when='+hdf4')
-    depends_on('gdal', when='+gdal')
-    depends_on('udunits2', when='+udunits2')
+    depends_on('gdal+proj@:2.4', when='+gdal')
+    depends_on('udunits', when='+udunits2')
 
     # We need src files of triangle to appear in ncl's src tree if we want
     # triangle's features.
     resource(
         name='triangle',
         url='http://www.netlib.org/voronoi/triangle.zip',
-        md5='10aff8d7950f5e0e2fb6dd2e340be2c9',
+        sha256='1766327add038495fa3499e9b7cc642179229750f7201b94f8e1b7bee76f8480',
         placement='triangle_src',
         when='+triangle')
 
@@ -135,8 +123,8 @@ class Ncl(Package):
         self.prepare_src_tree()
         make('Everything', parallel=False)
 
-    def setup_environment(self, spack_env, run_env):
-        run_env.set('NCARG_ROOT', self.spec.prefix)
+    def setup_run_environment(self, env):
+        env.set('NCARG_ROOT', self.spec.prefix)
 
     def prepare_site_config(self):
         fc_flags = []
@@ -188,9 +176,9 @@ class Ncl(Package):
             # Build NCL?
             'y\n',
             # Parent installation directory :
-            '\'' + self.spec.prefix + '\'\n',
+            self.spec.prefix + '\n',
             # System temp space directory   :
-            '\'' + tempfile.gettempdir() + '\'\n',
+            tempfile.gettempdir() + '\n',
             # Build NetCDF4 feature support (optional)?
             'y\n'
         ]
@@ -236,12 +224,12 @@ class Ncl(Package):
             # Build GRIB2 support (optional) into NCL?
             'n\n',
             # Enter local library search path(s) :
-            # The paths will be passed by the Spack wrapper.
-            ' \n',
+            self.spec['pixman'].prefix.lib + ' ' +
+            self.spec['bzip2'].prefix.lib + '\n',
             # Enter local include search path(s) :
             # All other paths will be passed by the Spack wrapper.
-            '\'' + join_path(self.spec['freetype'].prefix.include,
-                             'freetype2') + '\'\n',
+            join_path(self.spec['freetype'].prefix.include, 'freetype2') +
+            '\n',
             # Go back and make more changes or review?
             'n\n',
             # Save current configuration?

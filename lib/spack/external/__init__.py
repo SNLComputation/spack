@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 """This module contains the following external, potentially separately
 licensed, packages that are included in Spack:
 
@@ -74,7 +55,9 @@ jsonschema
 * Usage: An implementation of JSON Schema for Python.
 * Version: 2.4.0 (last version before functools32 dependency was added)
 * Note: functools32 doesn't support Python 2.6 or 3.0, so jsonschema
-  cannot be upgraded any further
+  cannot be upgraded any further until we drop 2.6.
+  Also, jsonschema/validators.py has been modified NOT to try to import
+  requests (see 7a1dd517b8).
 
 markupsafe
 ----------
@@ -130,18 +113,24 @@ ruamel.yaml
   compatibility -- some ``{}`` format strings were replaced, and the
   import for ``OrderedDict`` was tweaked.
 
-setuptools
-----------
-
-* Homepage: https://setuptools.readthedocs.io/en/latest/
-* Usage: Needed by pytest.
-* Version: 36.8.0 (latest supporting python 2.6)
-* Note: pkg_resources is part of setuptools and has been vendored too
-
 six
 ---
 
 * Homepage: https://pypi.python.org/pypi/six
 * Usage: Python 2 and 3 compatibility utilities.
 * Version: 1.11.0
+
+macholib
+--------
+
+* Homepage: https://macholib.readthedocs.io/en/latest/index.html#
+* Usage: Manipulation of Mach-o binaries for relocating macOS buildcaches on Linux
+* Version: 1.12
+
+altgraph
+--------
+
+* Homepage: https://altgraph.readthedocs.io/en/latest/index.html
+* Usage: dependency of macholib
+* Version: 0.16.1
 """

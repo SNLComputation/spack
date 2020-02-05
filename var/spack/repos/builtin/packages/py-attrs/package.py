@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -29,13 +10,15 @@ class PyAttrs(PythonPackage):
     """Classes Without Boilerplate"""
 
     homepage = "http://attrs.org/"
-    url      = "https://pypi.io/packages/source/a/attrs/attrs-18.1.0.tar.gz"
+    url      = "https://pypi.io/packages/source/a/attrs/attrs-19.2.0.tar.gz"
 
     import_modules = ['attr']
 
-    version('18.1.0', '3f3f3e0750dab74cfa1dc8b0fd7a5f86')
-    version('16.3.0', '4ec003c49360853cf935113d1ae56151')
+    version('19.2.0', sha256='f913492e1663d3c36f502e5e9ba6cd13cf19d7fab50aa13239e420fef95e1396')
+    version('18.1.0', sha256='e0d0eb91441a3b53dab4d9b743eafc1ac44476296a2053b6ca3af0b139faf87b')
+    version('16.3.0', sha256='80203177723e36f3bbe15aa8553da6e80d47bfe53647220ccaa9ad7a5e473ccc')
 
+    depends_on('python@2.7:2.8,3.4:', type=('build', 'run'))
     depends_on('py-setuptools', type='build')
 
     depends_on('py-coverage', type='test')

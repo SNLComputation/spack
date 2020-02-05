@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2017, Los Alamos National Security, LLC
-# Produced at the Los Alamos National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 
 from spack import *
 import os
@@ -36,15 +17,15 @@ class Flang(CMakePackage):
     git      = "https://github.com/flang-compiler/flang.git"
 
     version('develop', branch='master')
-    version('20180612', '62284e26214eaaff261a922c67f6878c')
+    version('20180921', sha256='f33bd1f054e474f1e8a204bb6f78d42f8f6ecf7a894fdddc3999f7c272350784')
+    version('20180612', sha256='6af858bea013548e091371a97726ac784edbd4ff876222575eaae48a3c2920ed')
 
-    depends_on('llvm@flang-develop', when='@develop')
-    depends_on('llvm@flang-20180612', when='@20180612 target=x86_64')
-
-    # LLVM version specific to OpenPOWER.
-    depends_on('llvm@flang-ppc64le-20180612', when='@20180612 target=ppc64le')
+    depends_on('llvm@develop+flang~gold~lldb~lld~compiler-rt~libcxx~polly~internal_unwind', when='@develop')
+    depends_on('llvm@7.0.1+flang~gold~lldb~lld~compiler-rt~libcxx~polly~internal_unwind', when='@20180921')
+    depends_on('llvm@6.0.0+flang~gold~lldb~lld~compiler-rt~libcxx~polly~internal_unwind', when='@20180612')
 
     depends_on('pgmath@develop', when='@develop')
+    depends_on('pgmath@20180921', when='@20180921')
     depends_on('pgmath@20180612', when='@20180612')
 
     def cmake_args(self):
@@ -84,9 +65,11 @@ class Flang(CMakePackage):
         chmod = which('chmod')
         chmod('+x', flang)
 
-    def setup_environment(self, spack_env, run_env):
+    def setup_build_environment(self, env):
         # to find llvm's libc++.so
-        spack_env.set('LD_LIBRARY_PATH', self.spec['llvm'].prefix.lib)
-        run_env.set('FC', join_path(self.spec.prefix.bin, 'flang'))
-        run_env.set('F77', join_path(self.spec.prefix.bin, 'flang'))
-        run_env.set('F90', join_path(self.spec.prefix.bin, 'flang'))
+        env.set('LD_LIBRARY_PATH', self.spec['llvm'].prefix.lib)
+
+    def setup_run_environment(self, env):
+        env.set('FC',  self.spec.prefix.bin.flang)
+        env.set('F77', self.spec.prefix.bin.flang)
+        env.set('F90', self.spec.prefix.bin.flang)

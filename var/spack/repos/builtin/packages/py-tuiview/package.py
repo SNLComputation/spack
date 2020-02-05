@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -33,8 +14,8 @@ class PyTuiview(PythonPackage):
     homepage = "https://bitbucket.org/chchrsc/tuiview"
     url      = "https://bitbucket.org/chchrsc/tuiview/get/tuiview-1.1.7.tar.gz"
 
-    version('1.1.7', '4b3b38a820cc239c8ab4a181ac5d4c30')
+    version('1.1.7', sha256='fbf0bf29cc775357dad4f8a2f0c2ffa98bbf69d603a96353e75b321adef67573')
 
-    depends_on("py-pyqt", type=('build', 'run'))
+    depends_on("py-pyqt4", type=('build', 'run'))
     depends_on("py-numpy", type=('build', 'run'))
     depends_on("gdal")

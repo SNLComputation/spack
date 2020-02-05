@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -35,9 +16,21 @@ class Icu4c(AutotoolsPackage):
     list_url = "http://download.icu-project.org/files/icu4c"
     list_depth = 2
 
-    version('60.1', '3d164a2d1bcebd1464c6160ebb8315ef')
-    version('58.2', 'fac212b32b7ec7ab007a12dff1f3aea1')
-    version('57.1', '976734806026a4ef8bdd17937c8898b9')
+    version('64.1', sha256='92f1b7b9d51b396679c17f35a2112423361b8da3c1b9de00aa94fd768ae296e6')
+    version('60.1', sha256='f8f5a6c8fbf32c015a467972bdb1477dc5f5d5dfea908b6ed218715eeb5ee225')
+    version('58.2', sha256='2b0a4410153a9b20de0e20c7d8b66049a72aef244b53683d0d7521371683da0c')
+    version('57.1', sha256='ff8c67cb65949b1e7808f2359f2b80f722697048e90e7cfc382ec1fe229e9581')
+
+    variant('cxxstd',
+            default='11',
+            values=('11', '14', '17'),
+            multi=False,
+            description='Use the specified C++ standard when building')
+
+    depends_on('python', type='build', when='@64.1:')
+
+    conflicts('%intel@:16', when='@60.1:',
+              msg="Intel compilers have immature C++11 and multibyte support")
 
     configure_directory = 'source'
 
@@ -45,5 +38,26 @@ class Icu4c(AutotoolsPackage):
         url = "http://download.icu-project.org/files/icu4c/{0}/icu4c-{1}-src.tgz"
         return url.format(version.dotted, version.underscored)
 
+    def flag_handler(self, name, flags):
+        if name == 'cxxflags':
+            # Control of the C++ Standard is via adding the required "-std"
+            # flag to CXXFLAGS in env
+            flags.append(getattr(self.compiler,
+                         'cxx{0}_flag'.format(
+                             self.spec.variants['cxxstd'].value)))
+        return (None, flags, None)
+
     def configure_args(self):
-        return ['--enable-rpath']
+        args = []
+
+        if 'python' in self.spec:
+            # Make sure configure uses Spack's python package
+            # Without this, configure could pick a broken global installation
+            args.append('PYTHON={0}'.format(self.spec['python'].command))
+
+        # The --enable-rpath option is only needed on MacOS, and it
+        # breaks the build for xerces-c on Linux.
+        if 'platform=darwin' in self.spec:
+            args.append('--enable-rpath')
+
+        return args

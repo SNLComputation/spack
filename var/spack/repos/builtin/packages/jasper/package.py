@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -32,9 +13,9 @@ class Jasper(Package):
     url      = "https://www.ece.uvic.ca/~frodo/jasper/software/jasper-2.0.14.tar.gz"
     list_url = homepage
 
-    version('2.0.14',  '23561b51da8eb5d0dc85b91eff3d9a7f',
+    version('2.0.14',  sha256='2a1f61e55afe8b4ce8115e1508c5d7cb314d56dfcc2dd323f90c072f88ccf57b',
             url="https://www.ece.uvic.ca/~frodo/jasper/software/jasper-2.0.14.tar.gz")
-    version('1.900.1', 'a342b2b4495b3e1394e161eb5d85d754',
+    version('1.900.1', sha256='6b905a9c2aca2e275544212666eefc4eb44d95d0a57e4305457b407fe63f9494',
             url="https://www.ece.uvic.ca/~frodo/jasper/software/jasper-1.900.1.zip")
 
     variant('jpeg',   default=True,  description='Enable the use of the JPEG library')

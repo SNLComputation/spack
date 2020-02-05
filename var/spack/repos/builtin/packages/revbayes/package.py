@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -30,18 +11,28 @@ class Revbayes(CMakePackage):
        and an interpreted language."""
 
     homepage = "https://revbayes.github.io"
-    url      = "https://github.com/revbayes/revbayes/archive/v1.0.4-release.tar.gz"
+    url      = "https://github.com/revbayes/revbayes/archive/v1.0.11.tar.gz"
+    git      = "https://github.com/revbayes/revbayes.git"
 
-    version('1.0.4', '5d6de96bcb3b2686b270856de3555a58')
+    version('develop', branch='development')
+    version('1.0.13', sha256='472b4ccc44d813c1ff1b8d27e8ccf3d96388de79aa1688b3714f683ba65038fa')
+    version('1.0.12', sha256='d79f3a9bc72305cab35009d11e1f027fcaacde7329a4c49b5b8285588a8d3588')
+    version('1.0.11', sha256='7e81b1952e3a63cb84617fa632f4ccdf246b4d79e7d537a423540de047dadf50')
+    version('1.0.10', sha256='95e9affe8ca8d62880cf46778b6ec9dd8726e62a185670ebcbadf2eb2bb79f93')
 
     variant('mpi', default=True, description='Enable MPI parallel support')
 
     depends_on('boost')
     depends_on('mpi', when='+mpi')
 
-    conflicts('%gcc@7.1.0:')
+    conflicts('%gcc@7.1.0:', when='@:1.0.12')
 
-    root_cmakelists_dir = 'projects/cmake/build'
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.version > Version('1.0.13') and '+mpi' in self.spec:
+            return 'projects/cmake/build-mpi'
+        else:
+            return 'projects/cmake/build'
 
     @run_before('cmake')
     def regenerate(self):
@@ -57,6 +48,14 @@ class Revbayes(CMakePackage):
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
         if '+mpi' in spec:
-            install('rb-mpi', prefix.bin)
+            install_path = join_path(self.build_directory, '..', 'rb-mpi')
+            install(install_path, prefix.bin)
         else:
-            install('rb', prefix.bin)
+            install_path = join_path(self.build_directory, '..', 'rb')
+            install(install_path, prefix.bin)
+
+    @when('@1.0.12:1.0.13')
+    def install(self, spec, prefix):
+        mkdirp(prefix.bin)
+        install_path = join_path(self.build_directory, '..', 'rb')
+        install(install_path, prefix.bin)

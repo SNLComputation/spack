@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -31,8 +12,8 @@ class Libpciaccess(AutotoolsPackage):
     homepage = "http://cgit.freedesktop.org/xorg/lib/libpciaccess/"
     url      = "http://xorg.freedesktop.org/archive/individual/lib/libpciaccess-0.13.5.tar.gz"
 
-    version('0.13.5', '81468664fde96d1df2c3216fdf3c4a20')
-    version('0.13.4', 'cc1fad87da60682af1d5fa43a5da45a4')
+    version('0.13.5', sha256='fe26ec788732b4ef60b550f2d3fa51c605d27f646e18ecec878f061807a3526e')
+    version('0.13.4', sha256='74d92bda448e6fdb64fee4e0091255f48d625d07146a121653022ed3a0ca1f2f')
 
     depends_on('libtool', type='build')
     depends_on('pkgconfig', type='build')

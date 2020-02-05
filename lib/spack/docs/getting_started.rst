@@ -1,3 +1,8 @@
+.. Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+   Spack Project Developers. See the top-level COPYRIGHT file for details.
+
+   SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 .. _getting_started:
 
 ===============
@@ -11,10 +16,11 @@ Prerequisites
 Spack has the following minimum requirements, which must be installed
 before Spack is run:
 
-1. Python 2 (2.6 or 2.7) or 3 (3.4 - 3.7)
-2. A C/C++ compiler
-3. The ``git`` and ``curl`` commands.
-4. If using the ``gpg`` subcommand, ``gnupg2`` is required.
+#. Python 2 (2.6 or 2.7) or 3 (3.5 - 3.8) to run Spack
+#. A C/C++ compiler for building
+#. The ``make`` executable for building
+#. The ``git`` and ``curl`` commands for fetching
+#. If using the ``gpg`` subcommand, ``gnupg2`` is required
 
 These requirements can be easily installed on most modern Linux systems;
 on Macintosh, XCode is required.  Spack is designed to run on HPC
@@ -65,7 +71,7 @@ This automatically adds Spack to your ``PATH`` and allows the ``spack``
 command to be used to execute spack :ref:`commands <shell-support>` and
 :ref:`useful packaging commands <packaging-shell-support>`.
 
-If :ref:`environment-modules or dotkit <InstallEnvironmentModules>` is
+If :ref:`environment-modules <InstallEnvironmentModules>` is
 installed and available, the ``spack`` command can also load and unload
 :ref:`modules <modules>`.
 
@@ -91,7 +97,7 @@ Check Installation
 With Spack installed, you should be able to run some basic Spack
 commands.  For example:
 
-.. command-output:: spack spec netcdf
+.. command-output:: spack spec netcdf-c
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -184,7 +190,7 @@ where the compiler is installed.  For example:
 .. code-block:: console
 
    $ spack compiler find /usr/local/tools/ic-13.0.079
-   ==> Added 1 new compiler to ~/.spack/compilers.yaml
+   ==> Added 1 new compiler to ~/.spack/linux/compilers.yaml
        intel@13.0.079
 
 Or you can run ``spack compiler find`` with no arguments to force
@@ -196,11 +202,18 @@ installed, but you know that new compilers have been added to your
 
    $ module load gcc-4.9.0
    $ spack compiler find
-   ==> Added 1 new compiler to ~/.spack/compilers.yaml
+   ==> Added 1 new compiler to ~/.spack/linux/compilers.yaml
        gcc@4.9.0
 
 This loads the environment module for gcc-4.9.0 to add it to
 ``PATH``, and then it adds the compiler to Spack.
+
+.. note::
+
+   By default, spack does not fill in the ``modules:`` field in the
+   ``compilers.yaml`` file.  If you are using a compiler from a
+   module, then you should add this field manually.
+   See the section on :ref:`compilers-requiring-modules`.
 
 .. _cmd-spack-compiler-info:
 
@@ -234,7 +247,7 @@ Manual compiler configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If auto-detection fails, you can manually configure a compiler by
-editing your ``~/.spack/compilers.yaml`` file.  You can do this by running
+editing your ``~/.spack/<platform>/compilers.yaml`` file.  You can do this by running
 ``spack config edit compilers``, which will open the file in your ``$EDITOR``.
 
 Each compiler configuration in the file looks like this:
@@ -250,7 +263,7 @@ Each compiler configuration in the file looks like this:
          cxx: /usr/local/bin/icpc-15.0.024-beta
          f77: /usr/local/bin/ifort-15.0.024-beta
          fc: /usr/local/bin/ifort-15.0.024-beta
-       spec: intel@15.0.0:
+       spec: intel@15.0.0
 
 For compilers that do not support Fortran (like ``clang``), put
 ``None`` for ``f77`` and ``fc``:
@@ -320,6 +333,7 @@ by adding the following to your ``packages.yaml`` file:
      all:
        compiler: [gcc@4.9.3]
 
+.. _compilers-requiring-modules:
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Compilers Requiring Modules
@@ -455,18 +469,21 @@ Fortran.
    install GCC with Spack (``spack install gcc``) or with Homebrew
    (``brew install gcc``).
 
-#. The only thing left to do is to edit ``~/.spack/compilers.yaml`` to provide
+#. The only thing left to do is to edit ``~/.spack/darwin/compilers.yaml`` to provide
    the path to ``gfortran``:
 
    .. code-block:: yaml
 
       compilers:
-        darwin-x86_64:
-          clang@7.3.0-apple:
-            cc: /usr/bin/clang
-            cxx: /usr/bin/clang++
-            f77: /path/to/bin/gfortran
-            fc: /path/to/bin/gfortran
+      - compiler:
+        ...
+        paths:
+          cc: /usr/bin/clang
+          cxx: /usr/bin/clang++
+          f77: /path/to/bin/gfortran
+          fc: /path/to/bin/gfortran
+        spec: clang@11.0.0-apple
+
 
    If you used Spack to install GCC, you can get the installation prefix by
    ``spack location -i gcc`` (this will only work if you have a single version
@@ -577,11 +594,12 @@ flags to the ``icc`` command:
            operating_system: centos7
            paths:
              cc: /opt/intel-15.0.24/bin/icc-15.0.24-beta
-             cflags: -gcc-name ~/spack/opt/spack/linux-centos7-x86_64/gcc-4.9.3-iy4rw.../bin/gcc
              cxx: /opt/intel-15.0.24/bin/icpc-15.0.24-beta
-             cxxflags: -gxx-name ~/spack/opt/spack/linux-centos7-x86_64/gcc-4.9.3-iy4rw.../bin/g++
              f77: /opt/intel-15.0.24/bin/ifort-15.0.24-beta
              fc: /opt/intel-15.0.24/bin/ifort-15.0.24-beta
+           flags:
+             cflags: -gcc-name ~/spack/opt/spack/linux-centos7-x86_64/gcc-4.9.3-iy4rw.../bin/gcc
+             cxxflags: -gxx-name ~/spack/opt/spack/linux-centos7-x86_64/gcc-4.9.3-iy4rw.../bin/g++
              fflags: -gcc-name ~/spack/opt/spack/linux-centos7-x86_64/gcc-4.9.3-iy4rw.../bin/gcc
            spec: intel@15.0.24.4.9.3
 
@@ -1266,3 +1284,17 @@ for each compiler type for each cray modules. This ensures that for each
 compiler on our system we can use that external module.
 
 For more on external packages check out the section :ref:`sec-external-packages`.
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Using Linux containers on Cray machines
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Spack uses environment variables particular to the Cray programming
+environment to determine which systems are Cray platforms. These
+environment variables may be propagated into containers that are not
+using the Cray programming environment.
+
+To ensure that Spack does not autodetect the Cray programming
+environment, unset the environment variable ``CRAYPE_VERSION``. This
+will cause Spack to treat a linux container on a Cray system as a base
+linux distro.

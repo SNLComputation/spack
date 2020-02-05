@@ -1,28 +1,10 @@
-##############################################################################
-# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 import os.path
+import re
 
 import pytest
 
@@ -36,6 +18,11 @@ def _module_files(module_type, *specs):
     specs = [spack.spec.Spec(x).concretized() for x in specs]
     writer_cls = spack.modules.module_types[module_type]
     return [writer_cls(spec).layout.filename for spec in specs]
+
+
+@pytest.fixture(scope='module', autouse=True)
+def ensure_module_files_are_there(database):
+    module('tcl', 'refresh', '-y')
 
 
 @pytest.fixture(
@@ -52,7 +39,7 @@ def failure_args(request):
 
 
 @pytest.fixture(
-    params=['dotkit', 'tcl', 'lmod']
+    params=['tcl', 'lmod']
 )
 def module_type(request):
     return request.param
@@ -156,6 +143,34 @@ def test_find_recursive():
     # be greater
     out = module('tcl', 'find', '-r', 'mpileaks ^zmpi')
     assert len(out.split()) > 1
+
+
+@pytest.mark.db
+def test_find_recursive_blacklisted(database, module_configuration):
+    module_configuration('blacklist')
+
+    module('lmod', 'refresh', '-y', '--delete-tree')
+    module('lmod', 'find', '-r', 'mpileaks ^mpich')
+
+
+@pytest.mark.db
+def test_loads_recursive_blacklisted(database, module_configuration):
+    module_configuration('blacklist')
+
+    module('lmod', 'refresh', '-y', '--delete-tree')
+    output = module('lmod', 'loads', '-r', 'mpileaks ^mpich')
+    lines = output.split('\n')
+
+    assert any(re.match(r'[^#]*module load.*mpileaks', l) for l in lines)
+    assert not any(re.match(r'[^#]module load.*callpath', l) for l in lines)
+    assert any(re.match(r'## blacklisted or missing.*callpath', l)
+               for l in lines)
+
+    # TODO: currently there is no way to separate stdout and stderr when
+    # invoking a SpackCommand. Supporting this requires refactoring
+    # SpackCommand, or log_output, or both.
+    # start_of_warning = spack.cmd.modules._missing_modules_warning[:10]
+    # assert start_of_warning not in output
 
 
 # Needed to make the 'module_configuration' fixture below work

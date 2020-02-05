@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from __future__ import print_function
 import re
 import argparse
@@ -29,10 +10,12 @@ import errno
 import sys
 
 
-class ArgparseWriter(object):
+class ArgparseWriter(argparse.HelpFormatter):
     """Analyzes an argparse ArgumentParser for easy generation of help."""
-    def __init__(self):
+    def __init__(self, out=sys.stdout):
+        super(ArgparseWriter, self).__init__(out)
         self.level = 0
+        self.out = out
 
     def _write(self, parser, root=True, level=0):
         self.parser = parser
@@ -66,7 +49,7 @@ class ArgparseWriter(object):
         def action_group(function, actions):
             for action in actions:
                 arg = fmt._format_action_invocation(action)
-                help = action.help if action.help else ''
+                help = self._expand_help(action) if action.help else ''
                 function(arg, re.sub('\n', ' ', help))
 
         if root:
@@ -167,8 +150,7 @@ class ArgparseRstWriter(ArgparseWriter):
             strip_root_prog (bool): if ``True``, strip the base command name
                 from subcommands in output
         """
-        super(ArgparseWriter, self).__init__()
-        self.out = out
+        super(ArgparseRstWriter, self).__init__(out)
         self.rst_levels = rst_levels
         self.strip_root_prog = strip_root_prog
 

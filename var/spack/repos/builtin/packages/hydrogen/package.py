@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 import os
 import sys
 from spack import *
@@ -32,11 +13,20 @@ class Hydrogen(CMakePackage):
        and optimization library. Based on the Elemental library."""
 
     homepage = "http://libelemental.org"
-    url      = "https://github.com/LLNL/Elemental/archive/0.99.tar.gz"
+    url      = "https://github.com/LLNL/Elemental/archive/v1.0.1.tar.gz"
     git      = "https://github.com/LLNL/Elemental.git"
 
+    maintainers = ['bvanessen']
+
     version('develop', branch='hydrogen')
-    version('0.99', 'b678433ab1d498da47acf3dc5e056c23')
+    version('1.3.2', sha256='50bc5e87955f8130003d04dfd9dcad63107e92b82704f8107baf95b0ccf98ed6')
+    version('1.3.1', sha256='a8b8521458e9e747f2b24af87c4c2749a06e500019c383e0cefb33e5df6aaa1d')
+    version('1.3.0', sha256='0f3006aa1d8235ecdd621e7344c99f56651c6836c2e1bc0cf006331b70126b36')
+    version('1.2.0',   sha256='8545975139582ee7bfe5d00f8d83a8697afc285bf7026b0761e9943355974806')
+    version('1.1.0-1', sha256='73ce05e4166853a186469269cb00a454de71e126b2019f95bbae703b65606808')
+    version('1.1.0', sha256='b4c12913acd01c72d31f4522266bfeb8df1d4d3b4aef02e07ccbc9a477894e71')
+    version('1.0.1', sha256='27cf76e1ef1d58bd8f9b1e34081a14a682b7ff082fb5d1da56713e5e0040e528')
+    version('1.0', sha256='d8a97de3133f2c6b6bb4b80d32b4a4cc25eb25e0df4f0cec0f8cb19bf34ece98')
 
     variant('shared', default=True,
             description='Enables the build of shared libraries')
@@ -64,6 +54,10 @@ class Hydrogen(CMakePackage):
             description='Builds with support for GPUs via CUDA and cuDNN')
     variant('test', default=False,
             description='Builds test suite')
+    variant('al', default=False,
+            description='Builds with Aluminum communication library')
+    variant('omp_taskloops', default=False,
+            description='Use OpenMP taskloops instead of parallel for loops.')
 
     # Note that #1712 forces us to enumerate the different blas variants
     depends_on('openblas', when='blas=openblas ~openmp_blas ~int64_blas')
@@ -85,11 +79,13 @@ class Hydrogen(CMakePackage):
     depends_on('essl threads=openmp +ilp64', when='blas=essl +openmp_blas +int64_blas')
     depends_on('netlib-lapack +external-blas', when='blas=essl')
 
+    depends_on('aluminum', when='+al ~cuda')
+    depends_on('aluminum +gpu +mpi_cuda', when='+al +cuda')
+
     # Note that this forces us to use OpenBLAS until #1712 is fixed
     depends_on('lapack', when='blas=openblas ~openmp_blas')
 
-    depends_on('mpi', when='~cuda')
-    depends_on('mpi +cuda', when='+cuda')
+    depends_on('mpi')
 
     depends_on('scalapack', when='+scalapack')
     depends_on('gmp', when='+mpfr')
@@ -97,11 +93,13 @@ class Hydrogen(CMakePackage):
     depends_on('mpfr', when='+mpfr')
 
     depends_on('cuda', when='+cuda')
-    depends_on('cudnn', when='+cuda')
     depends_on('cub', when='+cuda')
 
     conflicts('@0:0.98', msg="Hydrogen did not exist before v0.99. " +
               "Did you mean to use Elemental instead?")
+
+    generator = 'Ninja'
+    depends_on('ninja', type='build')
 
     @property
     def libs(self):
@@ -125,6 +123,8 @@ class Hydrogen(CMakePackage):
             '-DHydrogen_USE_64BIT_BLAS_INTS:BOOL=%s' % ('+int64_blas' in spec),
             '-DHydrogen_ENABLE_MPC:BOOL=%s'        % ('+mpfr' in spec),
             '-DHydrogen_GENERAL_LAPACK_FALLBACK=ON',
+            '-DHydrogen_ENABLE_ALUMINUM=%s' % ('+al' in spec),
+            '-DHydrogen_ENABLE_CUB=%s' % ('+cuda' in spec),
             '-DHydrogen_ENABLE_CUDA=%s' % ('+cuda' in spec),
             '-DHydrogen_ENABLE_TESTING=%s' % ('+test' in spec),
         ]
@@ -142,7 +142,7 @@ class Hydrogen(CMakePackage):
             args.extend([
                 '-DHydrogen_USE_OpenBLAS:BOOL=%s' % ('blas=openblas' in spec),
                 '-DOpenBLAS_DIR:STRING={0}'.format(
-                    spec['hydrogen'].prefix)])
+                    spec['openblas'].prefix)])
         elif 'blas=mkl' in spec:
             args.extend([
                 '-DHydrogen_USE_MKL:BOOL=%s' % ('blas=mkl' in spec)])
@@ -151,5 +151,16 @@ class Hydrogen(CMakePackage):
         elif 'blas=essl' in spec:
             args.extend([
                 '-DHydrogen_USE_ESSL:BOOL=%s' % ('blas=essl' in spec)])
+
+        if '+omp_taskloops' in spec:
+            args.extend([
+                '-DHydrogen_ENABLE_OMP_TASKLOOP:BOOL=%s' %
+                ('+omp_taskloops' in spec)])
+
+        if '+al' in spec:
+            args.extend([
+                '-DHydrogen_ENABLE_ALUMINUM:BOOL=%s' % ('+al' in spec),
+                '-DALUMINUM_DIR={0}'.format(
+                    spec['aluminum'].prefix)])
 
         return args

@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 
 from spack import *
 import glob
@@ -36,13 +17,15 @@ class Metis(Package):
        multilevel recursive-bisection, multilevel k-way, and multi-constraint
        partitioning schemes."""
 
-    homepage = "http://glaros.dtc.umn.edu/gkhome/metis/metis/overview"
-    url      = "http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz"
-    list_url = "http://glaros.dtc.umn.edu/gkhome/fsroot/sw/metis/OLD"
+    #
+    # the previous metis website http://glaros.dtc.umn.edu/gkhome/metis/metis
+    # no longer exists. This is a github mirror that provides metis 5.1.0
+    #
 
-    version('5.1.0', '5465e67079419a69e0116de24fce58fe')
-    version('5.0.2', 'acb521a4e8c2e6dd559a7f9abd0468c5')
-    version('4.0.3', 'd3848b454532ef18dc83e4fb160d1e10')
+    homepage = "https://github.com/scivision/METIS/"
+    url      = "https://github.com/scivision/METIS/raw/master/metis-5.1.0.tar.gz"
+
+    version('5.1.0', sha256='76faebe03f6c963127dbb73c13eab58c9a3faeae48779f049066a21c087c5db2')
 
     variant('shared', default=True, description='Enables the build of shared libraries.')
     variant('gdb', default=False, description='Enables gdb support (version 5+).')
@@ -67,13 +50,7 @@ class Metis(Package):
     depends_on('cmake@2.8:', when='@5:', type='build')
 
     patch('install_gklib_defs_rename.patch', when='@5:')
-
-    def url_for_version(self, version):
-        url = "http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis"
-        if version < Version('4.0.3'):
-            url += "/OLD"
-        url += "/metis-{0}.tar.gz".format(version)
-        return url
+    patch('gklib_nomisleadingindentation_warning.patch', when='@5: %gcc@6:')
 
     @when('@5:')
     def patch(self):

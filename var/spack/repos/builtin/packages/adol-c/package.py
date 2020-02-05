@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -35,10 +16,10 @@ class AdolC(AutotoolsPackage):
     git      = "https://gitlab.com/adol-c/adol-c.git"
 
     version('develop',  branch='master')
-    version('2.6.3', 'f78f67f70d5874830a1ad1c0f54e54f7')
-    version('2.6.2', '0f9547584c99c0673e4f81cf64e8d865')
-    version('2.6.1', '1032b28427d6e399af4610e78c0f087b')
-    version('2.5.2', '96f81b80e93cca57398066ea4afe28f0')
+    version('2.6.3', sha256='6ed74580695a0d2c960581e5430ebfcd380eb5da9337daf488bf2e89039e9c21')
+    version('2.6.2', sha256='f6326e7ba994d02074816132d4461915221069267c31862b31fab7020965c658')
+    version('2.6.1', sha256='037089e0f64224e5e6255b61af4fe7faac080533fd778b76fe946e52491918b5')
+    version('2.5.2', sha256='2fa514d9799989d6379738c2bcf75070d9834e4d227eb32a5b278840893b2af9')
 
     variant('advanced_branching', default=False,
             description='Enable advanced branching to reduce retaping')

@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -35,7 +16,11 @@ class Xz(AutotoolsPackage):
     url      = "http://tukaani.org/xz/xz-5.2.4.tar.bz2"
     list_url = "http://tukaani.org/xz/old.html"
 
-    version('5.2.4', 'b3264b15ab1db04c8c428dc81838d4eb')
-    version('5.2.3', '1592e7ca3eece099b03b35f4d9179e7c')
-    version('5.2.2', 'f90c9a0c8b259aee2234c4e0d7fd70af')
-    version('5.2.0', '867cc8611760240ebf3440bd6e170bb9')
+    version('5.2.4', sha256='3313fd2a95f43d88e44264e6b015e7d03053e681860b0d5d3f9baca79c57b7bf')
+    version('5.2.3', sha256='fd9ca16de1052aac899ad3495ad20dfa906c27b4a5070102a2ec35ca3a4740c1')
+    version('5.2.2', sha256='6ff5f57a4b9167155e35e6da8b529de69270efb2b4cf3fbabf41a4ee793840b5')
+    version('5.2.0', sha256='f7357d7455a1670229b3cca021da71dd5d13b789db62743c20624bdffc9cc4a5')
+
+    @property
+    def libs(self):
+        return find_libraries(['liblzma'], root=self.prefix, recursive=True)

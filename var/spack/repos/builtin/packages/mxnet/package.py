@@ -1,27 +1,8 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the LICENSE file for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack import *
 
 
@@ -30,16 +11,9 @@ class Mxnet(MakefilePackage):
     designed for both efficiency and flexibility."""
 
     homepage = "http://mxnet.io"
-    url      = "https://github.com/apache/incubator-mxnet/archive/0.10.0.post2.tar.gz"
+    url      = "https://github.com/apache/incubator-mxnet/releases/download/1.3.0/apache-mxnet-src-1.3.0-incubating.tar.gz"
 
-    version('1.3.0', 'c00d6fbb2947144ce36c835308e603f002c1eb90a9f4c5a62f4d398154eed4d2',
-            url='https://github.com/apache/incubator-mxnet/releases/download/1.3.0/apache-mxnet-src-1.3.0-incubating.tar.gz')
-    version('0.10.0.post2',  '7819d511cf4a6efad681e6662fa966e4',
-            url="https://github.com/apache/incubator-mxnet/archive/0.10.0.post2.tar.gz")
-    version('0.10.0.post1',  '16d540f407cd22285555b3ab22040032',
-            url="https://github.com/apache/incubator-mxnet/archive/v0.10.0.post1.tar.gz")
-    version('0.10.0', '2d0c83c33eda729932d620cca3078826',
-            url="https://github.com/apache/incubator-mxnet/archive/v0.10.0.tar.gz")
+    version('1.3.0', sha256='c00d6fbb2947144ce36c835308e603f002c1eb90a9f4c5a62f4d398154eed4d2')
 
     variant('cuda', default=False, description='Enable CUDA support')
     variant('opencv', default=True, description='Enable OpenCV support')
