@@ -208,10 +208,12 @@ class Boost(Package):
     patch('clang-linux_add_option2.patch', when='@:1.55.0')
 
     def url_for_version(self, version):
-        if version >= Version('1.63.0'):
-            url = "https://dl.bintray.com/boostorg/release/{0}/source/boost_{1}.tar.bz2"
-        else:
-            url = "http://downloads.sourceforge.net/project/boost/boost/{0}/boost_{1}.tar.bz2"
+        #IKT, 3/1/2020: commented out n ext 4 lines - first URL is bad 
+        #if version >= Version('1.63.0'):
+        #    url = "https://dl.bintray.com/boostorg/release/{0}/source/boost_{1}.tar.bz2"
+        #else:
+        #    url = "http://downloads.sourceforge.net/project/boost/boost/{0}/boost_{1}.tar.bz2"
+        url = "http://downloads.sourceforge.net/project/boost/boost/{0}/boost_{1}.tar.bz2"
 
         return url.format(version.dotted, version.underscored)
 
