@@ -23,7 +23,7 @@ class Albany(CMakePackage):
 
     variant('lcm',          default=True,
             description='Enable LCM')
-    variant('aeras',          default=False,
+    variant('aeras',          default=True,
             description='Enable AERAS')
     variant('lcm_spec',          default=False,
             description='Enable LCM_SPECULATIVE')
@@ -35,9 +35,11 @@ class Albany(CMakePackage):
             description='Enable CHECK_FPE')
     variant('scorec',          default=False,
             description='Enable SCOREC')
-    variant('ali',          default=False,
-            description='Enable ALI')
-    variant('confgui',          default=False,
+    variant('landice',          default=True,
+            description='Enable LANDICE')
+    variant('ato',          default=True,
+            description='Enable ATO')
+    variant('confgui',          default=True,
             description='Enable Albany configuration (CI) GUI')
     variant('perf',          default=False,
             description='Enable PERFORMANCE_TESTS')
@@ -67,6 +69,10 @@ class Albany(CMakePackage):
                            'ON' if '+lcm_spec' in spec else 'OFF'),
                        '-DENABLE_LAME:BOOL=%s' % (
                            'ON' if '+lame' in spec else 'OFF'),
+                       '-DENABLE_LANDICE:BOOL=%s' % (
+                           'ON' if '+landice' in spec else 'OFF'),
+                       '-DENABLE_ATO:BOOL=%s' % (
+                           'ON' if '+ato' in spec else 'OFF'),
                        '-DENABLE_DEBUGGING:BOOL=%s' % (
                            'ON' if '+debug' in spec else 'OFF'),
                        '-DENABLE_CHECK_FPE:BOOL=%s' % (
