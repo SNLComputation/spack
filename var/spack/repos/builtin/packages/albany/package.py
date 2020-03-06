@@ -33,7 +33,7 @@ class Albany(CMakePackage):
             description='Enable DEBUGGING')
     variant('fpe',          default=False,
             description='Enable CHECK_FPE')
-    variant('scorec',          default=False,
+    variant('scorec',          default=True,
             description='Enable SCOREC')
     variant('landice',          default=True,
             description='Enable LANDICE')
@@ -48,7 +48,7 @@ class Albany(CMakePackage):
 
     # Add dependencies
     depends_on('mpi')
-    depends_on('trilinos@master,develop~superlu-dist+isorropia+tempus+rythmos+teko+intrepid+intrepid2+minitensor+phalanx+pnetcdf+nox+piro+rol+shards+stk+superlu gotype=long_long')
+    depends_on('trilinos@master,develop~superlu-dist+isorropia+tempus+rythmos+teko+intrepid+intrepid2+minitensor+phalanx+pnetcdf+nox+piro+rol+shards+stk+scorec+superlu gotype=long_long')
 
     def cmake_args(self):
         spec = self.spec

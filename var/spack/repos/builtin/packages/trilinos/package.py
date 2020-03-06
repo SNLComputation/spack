@@ -189,6 +189,8 @@ class Trilinos(CMakePackage):
             description='Enable DataTransferKit')
     variant('fortrilinos',  default=False,
             description='Enable ForTrilinos')
+    variant('scorec',          default=False,
+            description='Enable SCOREC')
 
     resource(name='dtk',
              git='https://github.com/ornl-cees/DataTransferKit.git',
@@ -207,6 +209,11 @@ class Trilinos(CMakePackage):
              placement='DataTransferKit',
              submodules=True,
              when='+dtk @develop')
+    resource(name='scorec',
+             git='https://github.com/SCOREC/core.git',
+             branch='develop',
+             placement='SCOREC',
+             when='+scorec')
     resource(name='fortrilinos',
              git='https://github.com/trilinos/ForTrilinos.git',
              tag='develop',
@@ -300,6 +307,7 @@ class Trilinos(CMakePackage):
     depends_on('lapack')
     depends_on('boost', when='+boost')
     depends_on('boost', when='+dtk')
+    depends_on('parmetis', when='+scorec')
     depends_on('matio')
     depends_on('glm')
     depends_on('metis@5:', when='+metis')
@@ -473,6 +481,13 @@ class Trilinos(CMakePackage):
             options.extend([
                 '-DTrilinos_EXTRA_REPOSITORIES:STRING=DataTransferKit',
                 '-DTrilinos_ENABLE_DataTransferKit:BOOL=ON'
+            ])
+        if '+scorec' in spec:
+            options.extend([
+                '-DTrilinos_ENABLE_SCOREC:BOOL=ON'
+                '-DTPL_ENABLE_ParMETIS:STRING=ON'
+                '-DParMETIS_INCLUDE_DIRS:PATH=%s' % spec['parmetis'].prefix.include,
+                '-DParMETIS_LIBRARY_DIRS:PATH=%s' % spec['parmetis'].prefix.lib
             ])
 
         if '+exodus' in spec:
