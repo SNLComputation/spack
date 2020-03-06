@@ -35,6 +35,8 @@ class Albany(CMakePackage):
             description='Enable CHECK_FPE')
     variant('scorec',          default=True,
             description='Enable SCOREC')
+    variant('tdm',          default=True,
+            description='Enable TDM')
     variant('landice',          default=True,
             description='Enable LANDICE')
     variant('ato',          default=True,
@@ -79,6 +81,8 @@ class Albany(CMakePackage):
                            'ON' if '+fpe' in spec else 'OFF'),
                        '-DENABLE_SCOREC:BOOL=%s' % (
                            'ON' if '+scorec' in spec else 'OFF'),
+                       '-DENABLE_TDM:BOOL=%s' % (
+                           'ON' if '+tdm' in spec else 'OFF'),
                        '-DENABLE_ALI:BOOL=%s' % (
                            'ON' if '+ali' in spec else 'OFF'),
                        '-DENABLE_ALBANY_CI:BOOL=%s' % (
