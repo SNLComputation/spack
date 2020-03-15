@@ -471,6 +471,7 @@ class Trilinos(CMakePackage):
         if '+stk' in spec:
             options.extend([
                 '-DTrilinos_ENABLE_STK:BOOL=ON'
+                '-DTrilinos_ENABLE_STKExprEval:BOOL=ON'
             ])
         else:
             options.extend([
