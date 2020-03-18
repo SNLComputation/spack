@@ -37,7 +37,7 @@ class Albany(CMakePackage):
             description='Enable SCOREC')
     variant('tdm',          default=True,
             description='Enable TDM')
-    variant('landice',          default=True,
+    variant('landice',          default=False,
             description='Enable LANDICE')
     variant('ato',          default=True,
             description='Enable ATO')
