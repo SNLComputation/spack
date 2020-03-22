@@ -27,6 +27,8 @@ class Albany(CMakePackage):
             description='Enable AERAS')
     variant('lcm_spec',          default=False,
             description='Enable LCM_SPECULATIVE')
+    variant('lcm_sens_tests_disable',          default=True,
+            description='Enable DISABLE_LCM_EXODIFF_SENSITIVE_TESTS')
     variant('lame',          default=False,
             description='Enable LAME')
     variant('debug',          default=False,
@@ -69,6 +71,8 @@ class Albany(CMakePackage):
                            'ON' if '+aeras' in spec else 'OFF'),
                        '-DENABLE_LCM_SPECULATIVE:BOOL=%s' % (
                            'ON' if '+lcm_spec' in spec else 'OFF'),
+                       '-DDISABLE_LCM_EXODIFF_SENSITIVE_TESTS=%s' % (
+                           'ON' if '+lcm_sens_tests_disable' in spec else 'OFF'),
                        '-DENABLE_LAME:BOOL=%s' % (
                            'ON' if '+lame' in spec else 'OFF'),
                        '-DENABLE_LANDICE:BOOL=%s' % (
