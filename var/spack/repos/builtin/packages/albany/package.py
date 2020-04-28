@@ -25,7 +25,7 @@ class Albany(CMakePackage):
             description='Enable DEBUGGING')
     variant('fpe',          default=False,
             description='Enable CHECK_FPE')
-    variant('landice',          default=False,
+    variant('landice',          default=True,
             description='Enable LANDICE')
     variant('unit_tests',          default=False,
             description='Enable_UNIT_TESTS')
