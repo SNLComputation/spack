@@ -21,28 +21,14 @@ class Albany(CMakePackage):
 
     version('develop', branch='master')
 
-    variant('lcm',          default=True,
-            description='Enable LCM')
-    variant('aeras',          default=True,
-            description='Enable AERAS')
-    variant('lcm_spec',          default=False,
-            description='Enable LCM_SPECULATIVE')
-    variant('lcm_sens_tests_disable',          default=True,
-            description='Enable DISABLE_LCM_EXODIFF_SENSITIVE_TESTS')
-    variant('lame',          default=False,
-            description='Enable LAME')
     variant('debug',          default=False,
             description='Enable DEBUGGING')
     variant('fpe',          default=False,
             description='Enable CHECK_FPE')
-    variant('scorec',          default=True,
-            description='Enable SCOREC')
-    variant('tdm',          default=True,
-            description='Enable TDM')
     variant('landice',          default=False,
             description='Enable LANDICE')
-    variant('ato',          default=True,
-            description='Enable ATO')
+    variant('unit_tests',          default=False,
+            description='Enable_UNIT_TESTS')
     variant('confgui',          default=True,
             description='Enable Albany configuration (CI) GUI')
     variant('perf',          default=False,
@@ -65,30 +51,14 @@ class Albany(CMakePackage):
         ])
 
         options.extend([
-                       '-DENABLE_LCM:BOOL=%s' % (
-                           'ON' if '+lcm' in spec else 'OFF'),
-                       '-DENABLE_AERAS:BOOL=%s' % (
-                           'ON' if '+aeras' in spec else 'OFF'),
-                       '-DENABLE_LCM_SPECULATIVE:BOOL=%s' % (
-                           'ON' if '+lcm_spec' in spec else 'OFF'),
-                       '-DDISABLE_LCM_EXODIFF_SENSITIVE_TESTS=%s' % (
-                           'ON' if '+lcm_sens_tests_disable' in spec else 'OFF'),
-                       '-DENABLE_LAME:BOOL=%s' % (
-                           'ON' if '+lame' in spec else 'OFF'),
                        '-DENABLE_LANDICE:BOOL=%s' % (
                            'ON' if '+landice' in spec else 'OFF'),
-                       '-DENABLE_ATO:BOOL=%s' % (
-                           'ON' if '+ato' in spec else 'OFF'),
+                       '-DENABLE_UNIT_TESTS:BOOL=%s' % (
+                           'ON' if '+unit_tests' in spec else 'OFF'),
                        '-DENABLE_DEBUGGING:BOOL=%s' % (
                            'ON' if '+debug' in spec else 'OFF'),
                        '-DENABLE_CHECK_FPE:BOOL=%s' % (
                            'ON' if '+fpe' in spec else 'OFF'),
-                       '-DENABLE_SCOREC:BOOL=%s' % (
-                           'ON' if '+scorec' in spec else 'OFF'),
-                       '-DENABLE_TDM:BOOL=%s' % (
-                           'ON' if '+tdm' in spec else 'OFF'),
-                       '-DENABLE_ALI:BOOL=%s' % (
-                           'ON' if '+ali' in spec else 'OFF'),
                        '-DENABLE_ALBANY_CI:BOOL=%s' % (
                            'ON' if '+ci' in spec else 'OFF'),
                        '-DENABLE_PERFORMANCE_TESTS:BOOL=%s' % (
