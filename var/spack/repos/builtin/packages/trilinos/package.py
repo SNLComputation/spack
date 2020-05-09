@@ -494,6 +494,9 @@ class Trilinos(CMakePackage):
         if '+exodus' in spec:
             options.extend([
                 '-DTrilinos_ENABLE_SEACAS:BOOL=ON',
+                '-DTrilinos_ENABLE_SEACASAprepro:BOOL=ON'
+                '-DTrilinos_ENABLE_SEACASConjoin:BOOL=ON'
+                '-DTrilinos_ENABLE_SEACASEjoin:BOOL=ON'
                 '-DTrilinos_ENABLE_SEACASExodus:BOOL=ON',
                 '-DTrilinos_ENABLE_SEACASIoss:BOOL=ON',
                 '-DTrilinos_ENABLE_SEACASEpu:BOOL=ON',
