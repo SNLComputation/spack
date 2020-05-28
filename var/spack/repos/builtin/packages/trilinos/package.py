@@ -447,6 +447,8 @@ class Trilinos(CMakePackage):
                 'ON' if '+rythmos' in spec else 'OFF'),
             '-DTrilinos_ENABLE_Sacado:BOOL=%s' % (
                 'ON' if '+sacado' in spec else 'OFF'),
+            '-DSacado_NEW_FAD_DESIGN_IS_DEFAULT:BOOL=%s' % (
+                'OFF' if '+sacado' in spec else 'OFF'),
             '-DTrilinos_ENABLE_Shards=%s' % (
                 'ON' if '+shards' in spec else 'OFF'),
             '-DTrilinos_ENABLE_ShyLU=%s' % (
