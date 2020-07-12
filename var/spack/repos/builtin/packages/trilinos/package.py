@@ -405,6 +405,8 @@ class Trilinos(CMakePackage):
                 'ON' if '+amesos' in spec else 'OFF'),
             '-DTrilinos_ENABLE_Amesos2:BOOL=%s' % (
                 'ON' if '+amesos2' in spec else 'OFF'),
+            '-DAmesos2_ENABLE_KLU2:BOOL=%s' % (
+                'ON' if '+amesos2' in spec else 'OFF'),
             '-DTrilinos_ENABLE_Anasazi:BOOL=%s' % (
                 'ON' if '+anasazi' in spec else 'OFF'),
             '-DTrilinos_ENABLE_AztecOO:BOOL=%s' % (
