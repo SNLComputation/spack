@@ -191,6 +191,8 @@ class Trilinos(CMakePackage):
             description='Enable ForTrilinos')
     variant('scorec',          default=False,
             description='Enable SCOREC')
+    variant('matio',          default=False,
+            description='Enable Matio')
 
     resource(name='dtk',
              git='https://github.com/ornl-cees/DataTransferKit.git',
@@ -308,7 +310,7 @@ class Trilinos(CMakePackage):
     depends_on('boost', when='+boost')
     depends_on('boost', when='+dtk')
     depends_on('parmetis', when='+scorec')
-    depends_on('matio')
+    depends_on('matio', when='+matio')
     depends_on('glm')
     depends_on('metis@5:', when='+metis')
     depends_on('suite-sparse', when='+suite-sparse')
@@ -431,6 +433,8 @@ class Trilinos(CMakePackage):
                 'ON' if '+kokkos' in spec else 'OFF'),
             '-DTrilinos_ENABLE_MiniTensor=%s' % (
                 'ON' if '+minitensor' in spec else 'OFF'),
+            '-DTPL_ENABLE_Matio=%s' % (
+                'ON' if '+matio' in spec else 'OFF'),
             '-DTrilinos_ENABLE_ML:BOOL=%s' % (
                 'ON' if '+ml' in spec else 'OFF'),
             '-DTrilinos_ENABLE_MueLu:BOOL=%s' % (
