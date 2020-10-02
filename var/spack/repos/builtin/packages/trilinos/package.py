@@ -131,6 +131,8 @@ class Trilinos(CMakePackage):
             description='Compile with Chaco from SEACAS')
     variant('epetra',       default=True,
             description='Compile with Epetra')
+    variant('panzerdofmgr',       default=True,
+            description='Compile with PanzerDofMgr')
     variant('epetraext',    default=True,
             description='Compile with EpetraExt')
     variant('exodus',       default=True,
@@ -417,6 +419,8 @@ class Trilinos(CMakePackage):
                 'ON' if '+belos' in spec else 'OFF'),
             '-DTrilinos_ENABLE_Epetra:BOOL=%s' % (
                 'ON' if '+epetra' in spec else 'OFF'),
+            '-DTrilinos_ENABLE_PanzerDofMgr:BOOL=%s' % (
+                'ON' if '+panzerdofmgr' in spec else 'OFF'),
             '-DTrilinos_ENABLE_EpetraExt:BOOL=%s' % (
                 'ON' if '+epetraext' in spec else 'OFF'),
             '-DTrilinos_ENABLE_Ifpack:BOOL=%s' % (
@@ -430,6 +434,8 @@ class Trilinos(CMakePackage):
             '-DTrilinos_ENABLE_Isorropia=%s' % (
                 'ON' if '+isorropia' in spec else 'OFF'),
             '-DTrilinos_ENABLE_Kokkos:BOOL=%s' % (
+                'ON' if '+kokkos' in spec else 'OFF'),
+            '-DKOKKOS_ENABLE_LIBDL:BOOL=%s' % (
                 'ON' if '+kokkos' in spec else 'OFF'),
             '-DTrilinos_ENABLE_MiniTensor=%s' % (
                 'ON' if '+minitensor' in spec else 'OFF'),
